@@ -11,6 +11,8 @@
     "url": "https://github.com/drkpaladin246/darkforest.git"
   },
   "scripts": {
+    "postinstall": "node scripts/ensure-electron.js",
+    "prestart": "node scripts/ensure-electron.js",
     "start": "electron .",
     "icons": "node scripts/make-icon.js",
     "dist": "electron-builder",

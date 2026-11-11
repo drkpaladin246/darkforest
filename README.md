@@ -79,7 +79,7 @@ npm install
 npm start
 ```
 
-The `allowScripts` field in `package.json` lets npm 11+/12 run Electron's download script, so a plain `npm install` is enough. If you see "Electron failed to install correctly", delete `node_modules` and run `npm install` again.
+The first `npm install` (or `npm start`) also downloads the Electron runtime, about 100 MB. `scripts/ensure-electron.js` handles this itself, so it works on npm 11/12 (which block dependency install scripts) and on Node 26. If you ever see "Electron failed to install correctly", run `npm start` again and it will repair the download.
 
 Closing the window keeps the app running in the menu bar / tray so the timer continues. Use **Quit** from the tray menu (or Cmd+Q on macOS) to exit.
 
