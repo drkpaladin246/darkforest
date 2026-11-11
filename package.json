@@ -16,9 +16,10 @@
     "start": "electron .",
     "icons": "node scripts/make-icon.js",
     "dist": "electron-builder",
-    "dist:mac": "electron-builder --mac",
+    "dist:mac": "electron-builder --mac --arm64",
     "dist:win": "electron-builder --win",
-    "test": "node --test test/core.test.mjs"
+    "test": "node --test test/core.test.mjs",
+    "dist:mac-intel": "electron-builder --mac --x64"
   },
   "dependencies": {
     "three": "0.170.0"
@@ -44,14 +45,11 @@
       "category": "public.app-category.productivity",
       "target": [
         {
-          "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "target": "dmg"
         }
       ],
-      "icon": "build/icon.png"
+      "icon": "build/icon.png",
+      "identity": null
     },
     "dmg": {
       "title": "Pomodoro Forest"
@@ -71,7 +69,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "shortcutName": "Pomodoro Forest"
-    }
+    },
+    "afterPack": "scripts/after-pack.js"
   },
   "allowScripts": {
     "electron": true,
