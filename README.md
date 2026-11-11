@@ -79,6 +79,8 @@ npm install
 npm start
 ```
 
+The `allowScripts` field in `package.json` lets npm 11+/12 run Electron's download script, so a plain `npm install` is enough. If you see "Electron failed to install correctly", delete `node_modules` and run `npm install` again.
+
 Closing the window keeps the app running in the menu bar / tray so the timer continues. Use **Quit** from the tray menu (or Cmd+Q on macOS) to exit.
 
 ## Build installers

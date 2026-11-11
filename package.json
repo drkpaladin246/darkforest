@@ -6,6 +6,10 @@
   "main": "src/main.js",
   "author": "Kadir",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drkpaladin246/darkforest.git"
+  },
   "scripts": {
     "start": "electron .",
     "icons": "node scripts/make-icon.js",
@@ -19,21 +23,46 @@
   },
   "devDependencies": {
     "electron": "39.8.0",
-    "electron-builder": "26.0.12"
+    "electron-builder": "26.17.0"
   },
   "build": {
     "appId": "com.pomodoroforest.app",
     "productName": "Pomodoro Forest",
-    "directories": { "output": "dist", "buildResources": "build" },
-    "files": ["src/**/*", "build/icon.png", "build/tray*.png", "package.json"],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/**/*",
+      "build/icon.png",
+      "build/tray*.png",
+      "package.json"
+    ],
     "mac": {
       "category": "public.app-category.productivity",
-      "target": [{ "target": "dmg", "arch": ["x64", "arm64"] }],
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
       "icon": "build/icon.png"
     },
-    "dmg": { "title": "Pomodoro Forest" },
+    "dmg": {
+      "title": "Pomodoro Forest"
+    },
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "build/icon.png"
     },
     "nsis": {
@@ -41,5 +70,9 @@
       "allowToChangeInstallationDirectory": true,
       "shortcutName": "Pomodoro Forest"
     }
+  },
+  "allowScripts": {
+    "electron": true,
+    "electron-winstaller": true
   }
 }
