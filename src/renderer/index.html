@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:" />
+  <title>Pomodoro Forest</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Left panel -->
+    <aside class="panel">
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="timer" role="tab">Timer</button>
+        <button class="tab" data-tab="tasks" role="tab">Tasks</button>
+        <button class="tab" data-tab="stats" role="tab">Stats</button>
+        <button class="tab" data-tab="settings" role="tab">Settings</button>
+      </nav>
+
+      <!-- Timer -->
+      <section class="view active" id="view-timer">
+        <div class="phases">
+          <button class="phase" data-phase="focus">Focus</button>
+          <button class="phase" data-phase="short">Short break</button>
+          <button class="phase" data-phase="long">Long break</button>
+        </div>
+
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+            <circle class="ring-track" cx="100" cy="100" r="88" />
+            <circle class="ring-progress" id="ring-progress" cx="100" cy="100" r="88" />
+            <circle class="ring-dot" id="ring-dot" cx="100" cy="12" r="5" />
+          </svg>
+          <div class="ring-center">
+            <div class="time" id="time">25:00</div>
+            <div class="stage" id="stage">Plant a seed</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn icon" id="btn-reset" title="Reset (R)" aria-label="Reset">
+            <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4" /></svg>
+          </button>
+          <button class="btn primary" id="btn-toggle" title="Start / pause (Space)">Start</button>
+          <button class="btn icon" id="btn-skip" title="Skip (S)" aria-label="Skip">
+            <svg viewBox="0 0 24 24"><path d="M6 5l9 7-9 7V5zM18 5v14" /></svg>
+          </button>
+        </div>
+
+        <div class="session-dots" id="session-dots" title="Sessions until long break"></div>
+
+        <label class="focus-task">
+          <span>Focusing on</span>
+          <select id="focus-task"></select>
+        </label>
+
+        <div class="species">
+          <span>Tree to grow</span>
+          <div class="species-list" id="species-list"></div>
+        </div>
+
+        <p class="hint">Space start/pause · S skip · R reset · <span id="global-hint">Ctrl+Shift+Space</span> anywhere</p>
+      </section>
+
+      <!-- Tasks -->
+      <section class="view" id="view-tasks">
+        <form class="task-form" id="task-form">
+          <input id="task-input" placeholder="Add a task…" maxlength="120" autocomplete="off" />
+          <input id="task-est" type="number" min="1" max="20" value="1" title="Estimated pomodoros" />
+          <button class="btn primary small" type="submit">Add</button>
+        </form>
+        <ul class="task-list" id="task-list"></ul>
+        <button class="btn ghost small" id="clear-done">Clear completed</button>
+      </section>
+
+      <!-- Stats -->
+      <section class="view" id="view-stats">
+        <div class="stat-grid">
+          <div class="stat"><b id="st-today">0</b><span>sessions today</span></div>
+          <div class="stat"><b id="st-today-min">0m</b><span>focus today</span></div>
+          <div class="stat"><b id="st-streak">0</b><span>day streak</span></div>
+          <div class="stat"><b id="st-total">0</b><span>trees planted</span></div>
+          <div class="stat"><b id="st-total-min">0h</b><span>total focus</span></div>
+          <div class="stat"><b id="st-withered">0</b><span>withered</span></div>
+        </div>
+        <h3>This week</h3>
+        <canvas id="week-chart" width="360" height="170"></canvas>
+        <h3>Unlocks</h3>
+        <ul class="unlocks" id="unlocks"></ul>
+      </section>
+
+      <!-- Settings -->
+      <section class="view" id="view-settings">
+        <div class="setting-group">
+          <h3>Durations (minutes)</h3>
+          <label>Focus <input type="number" id="set-focus" min="1" max="180" /></label>
+          <label>Short break <input type="number" id="set-short" min="1" max="60" /></label>
+          <label>Long break <input type="number" id="set-long" min="1" max="90" /></label>
+          <label>Sessions before long break <input type="number" id="set-interval" min="2" max="12" /></label>
+        </div>
+        <div class="setting-group">
+          <h3>Flow</h3>
+          <label class="check"><input type="checkbox" id="set-auto-breaks" /> Auto-start breaks</label>
+          <label class="check"><input type="checkbox" id="set-auto-focus" /> Auto-start focus after a break</label>
+          <label class="check"><input type="checkbox" id="set-notify" /> Desktop notifications</label>
+        </div>
+        <div class="setting-group">
+          <h3>Sound</h3>
+          <label>Chime <select id="set-sound"></select></label>
+          <label>Volume <input type="range" id="set-volume" min="0" max="1" step="0.05" /></label>
+          <button class="btn ghost small" id="test-sound" type="button">Play</button>
+        </div>
+        <div class="setting-group">
+          <h3>Appearance</h3>
+          <label>Theme
+            <select id="set-theme">
+              <option value="system">System</option>
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+          </label>
+          <button class="btn ghost small" id="enter-mini" type="button">Mini mode (always on top)</button>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Forest -->
+    <main class="forest">
+      <canvas id="forest-canvas"></canvas>
+      <div class="forest-top">
+        <div class="seg" id="forest-range">
+          <button data-range="today">Today</button>
+          <button data-range="week">Week</button>
+          <button data-range="all" class="active">All time</button>
+        </div>
+        <div class="forest-count" id="forest-count"></div>
+      </div>
+      <div class="toast" id="toast"></div>
+      <div class="forest-hint">Drag to rotate · scroll or pinch to zoom</div>
+    </main>
+
+    <!-- Mini mode -->
+    <div class="mini-bar">
+      <svg class="mini-ring" viewBox="0 0 40 40"><circle class="ring-track" cx="20" cy="20" r="16"/><circle class="ring-progress" id="mini-progress" cx="20" cy="20" r="16"/></svg>
+      <div class="mini-info">
+        <div class="mini-time" id="mini-time">25:00</div>
+        <div class="mini-phase" id="mini-phase">Focus</div>
+      </div>
+      <button class="btn icon" id="mini-toggle" aria-label="Start or pause">
+        <svg viewBox="0 0 24 24"><path id="mini-toggle-icon" d="M7 5l12 7-12 7z" /></svg>
+      </button>
+      <button class="btn icon" id="mini-skip" aria-label="Skip">
+        <svg viewBox="0 0 24 24"><path d="M6 5l9 7-9 7V5zM18 5v14" /></svg>
+      </button>
+      <button class="btn icon" id="mini-exit" aria-label="Exit mini mode" title="Back to full window">
+        <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

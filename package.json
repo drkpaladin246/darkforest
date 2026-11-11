@@ -1,0 +1,45 @@
+{
+  "name": "darkforest",
+  "productName": "Pomodoro Forest",
+  "version": "1.0.0",
+  "description": "A focus timer that grows a low-poly 3D forest, one Pomodoro at a time.",
+  "main": "src/main.js",
+  "author": "Kadir",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "icons": "node scripts/make-icon.js",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "test": "node --test test/core.test.mjs"
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "electron": "39.8.0",
+    "electron-builder": "26.0.12"
+  },
+  "build": {
+    "appId": "com.pomodoroforest.app",
+    "productName": "Pomodoro Forest",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["src/**/*", "build/icon.png", "build/tray*.png", "package.json"],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [{ "target": "dmg", "arch": ["x64", "arm64"] }],
+      "icon": "build/icon.png"
+    },
+    "dmg": { "title": "Pomodoro Forest" },
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "Pomodoro Forest"
+    }
+  }
+}
